@@ -6,8 +6,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
 public final class Sekiro extends JavaPlugin {
-    static double magnification,punishment;
-    static int enchantedlvl;
+    static double magnification,punishment1,punishment2,punishment3;
+    static int enchantedlvl,angle;
     static List<String> tips;
 
     @Override
@@ -17,9 +17,12 @@ public final class Sekiro extends JavaPlugin {
         saveDefaultConfig();
         FileConfiguration c = getConfig();
         magnification = (c.getDouble("magnification"));
-        punishment =c.getDouble("punishment");
+        punishment1 =c.getDouble("punishment1");
+        punishment2 =c.getDouble("punishment2");
+        punishment3 =c.getDouble("punishment3");
         enchantedlvl = c.getInt("enchantedlvl");
         tips = c.getStringList("tips");
+        angle = c.getInt("angle")/2;
         getServer().getPluginManager().registerEvents(new MyListener(), this);
     }
 
