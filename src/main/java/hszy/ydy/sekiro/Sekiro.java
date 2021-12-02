@@ -8,7 +8,8 @@ import java.util.List;
 public final class Sekiro extends JavaPlugin {
     static double magnification,punishment1,punishment2,punishment3;
     static int enchantedlvl,angle;
-    static List<String> tips;
+    static List<String> tips,tips2;
+    static String enchantment;
 
     @Override
     public void onEnable() {
@@ -21,7 +22,9 @@ public final class Sekiro extends JavaPlugin {
         punishment2 =c.getDouble("punishment2");
         punishment3 =c.getDouble("punishment3");
         enchantedlvl = c.getInt("enchantedlvl");
-        tips = c.getStringList("tips");
+        enchantment = c.getString("enchantment");
+        tips = c.getStringList("tips_wei");
+        tips2 = c.getStringList("tips_si");
         angle = c.getInt("angle")/2;
         getServer().getPluginManager().registerEvents(new MyListener(), this);
     }

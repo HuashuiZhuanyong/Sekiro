@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -16,11 +17,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 public class MyListener implements Listener {
     /*抽取tips*/
-    public static String RandomStr(){
-        int random_index = (int) (Math.random()*Sekiro.tips.size());
-        return Sekiro.tips.get(random_index);
+    public static String RandomStr(List<String> s){
+        int random_index = (int) (Math.random()*s.size());
+        return s.get(random_index);
     }
 
     /*判断弹反角度*/
@@ -43,17 +46,31 @@ public class MyListener implements Listener {
         return re;
     }
 
+    /*危和死特效*/
+    public static void weiordie(Player p1,Entity p2,double nowhealth){
+        if(nowhealth <= 6 && nowhealth > 0){
+            p1.sendTitle("§4§l危",RandomStr(Sekiro.tips),30,40,30);
+            p1.playSound(p1.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 1.5);
+            if(p2 instanceof Player)((Player) p2).playSound(p2.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 1.5);
+        }else if(nowhealth <= 0){
+            p1.sendTitle("§4§l死",RandomStr(Sekiro.tips2),30,40,30);
+            p1.playSound(p1.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 0.9);
+            if(p2 instanceof Player)((Player) p2).playSound(p2.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 0.9);
+        }
+    }
+
     @EventHandler
-    public void onAttack(EntityDamageByEntityEvent e)// 监听消耗物品事件
+    public void onAttack(EntityDamageByEntityEvent e)// 监听实体攻击事件
     {
         if(e.getEntity() instanceof Player){//是玩家
+            Player p1 = (Player) e.getEntity();
+            Entity p2 = e.getDamager();
             //检测手里盾的附魔
-            if((((Player) e.getEntity()).getInventory().getItemInMainHand().getType() == Material.SHIELD)||(((Player) e.getEntity()).getInventory().getItemInOffHand().getType() == Material.SHIELD))
+            if((p1.getInventory().getItemInMainHand().getType() == Material.SHIELD)||(((Player) e.getEntity()).getInventory().getItemInOffHand().getType() == Material.SHIELD))
             {
-                if((((Player) e.getEntity()).getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DAMAGE_ALL) == Sekiro.enchantedlvl)||(((Player) e.getEntity()).getInventory().getItemInOffHand().getEnchantmentLevel(Enchantment.DAMAGE_ALL) == Sekiro.enchantedlvl))
+                Enchantment ench = new EnchantmentWrapper(Sekiro.enchantment);
+                if((p1.getInventory().getItemInMainHand().getEnchantmentLevel(ench) == Sekiro.enchantedlvl)||(((Player) e.getEntity()).getInventory().getItemInOffHand().getEnchantmentLevel(ench) == Sekiro.enchantedlvl))
                 {
-                    Player p1 = (Player) e.getEntity();
-                    Entity p2 = e.getDamager();
                     double dmg = (e.getDamage());
                     dmg = dmg<0?dmg*(-1):dmg;
                     //flag负责限定弹反范围
@@ -77,20 +94,12 @@ public class MyListener implements Listener {
                         }else {//没挡住(背后)
                             e.setDamage(punishdmg);
                             //低血量特效
-                            if(p1.getHealth() - e.getFinalDamage() <= 6){
-                                p1.sendTitle("§4§l危",RandomStr(),30,40,30);
-                                p1.playSound(p1.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 1.5);
-                                if(p2 instanceof Player)((Player) p2).playSound(p2.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 1.5);
-                            }
+                            weiordie(p1,p2,p1.getHealth() - e.getFinalDamage());
                         }
                     }
                     else {
                         //低血量特效
-                        if(p1.getHealth() - e.getFinalDamage() <= 6){
-                            p1.sendTitle("§4§l危",RandomStr(),30,40,30);
-                            p1.playSound(p1.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 1.5);
-                            if(p2 instanceof Player)((Player) p2).playSound(p2.getLocation(), Sound.BLOCK_END_PORTAL_SPAWN,(float) 1.0,(float) 1.5);
-                        }
+                        weiordie(p1,p2,p1.getHealth() - e.getFinalDamage());
                     }
                 }
             }
