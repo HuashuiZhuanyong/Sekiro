@@ -1,7 +1,11 @@
 package hszy.ydy.sekiro;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
@@ -26,6 +30,7 @@ public final class Sekiro extends JavaPlugin {
         tips = c.getStringList("tips_wei");
         tips2 = c.getStringList("tips_si");
         angle = c.getInt("angle")/2;
+        Bukkit.getPluginCommand("getshield").setExecutor(new MyCommandExecutor());
         getServer().getPluginManager().registerEvents(new MyListener(), this);
     }
 

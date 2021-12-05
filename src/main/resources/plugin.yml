@@ -1,4 +1,10 @@
 name: Sekiro
-version: 3.1
+version: 3.2
 main: hszy.ydy.sekiro.Sekiro
 api-version: 1.16
+commands:
+  getshield:
+    description: "获得可触发弹反的盾牌"
+    usage: /getshield
+    permission: "getshield.use"
+    permission-message: "你需要getshield.use权限或op权限"

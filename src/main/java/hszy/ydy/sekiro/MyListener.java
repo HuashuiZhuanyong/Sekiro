@@ -2,6 +2,7 @@ package hszy.ydy.sekiro;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -65,12 +67,36 @@ public class MyListener implements Listener {
         if(e.getEntity() instanceof Player){//是玩家
             Player p1 = (Player) e.getEntity();
             Entity p2 = e.getDamager();
+            ItemStack shield_1,shield_2;
+            shield_1=new ItemStack(Material.SHIELD);
+            shield_2=new ItemStack(Material.SHIELD);
+            boolean have_shield=false;
+            if(p1.getInventory().getItemInMainHand().getType() == Material.SHIELD){
+                shield_1=p1.getInventory().getItemInMainHand();
+                have_shield=true;
+            }
+            if(p1.getInventory().getItemInOffHand().getType() ==Material.SHIELD){
+                shield_2=p1.getInventory().getItemInOffHand();
+                have_shield=true;
+            }
             //检测手里盾的附魔
-            if((p1.getInventory().getItemInMainHand().getType() == Material.SHIELD)||(((Player) e.getEntity()).getInventory().getItemInOffHand().getType() == Material.SHIELD))
+            if(have_shield)
             {
-                Enchantment ench = new EnchantmentWrapper(Sekiro.enchantment);
-                if((p1.getInventory().getItemInMainHand().getEnchantmentLevel(ench) == Sekiro.enchantedlvl)||(((Player) e.getEntity()).getInventory().getItemInOffHand().getEnchantmentLevel(ench) == Sekiro.enchantedlvl))
-                {
+                boolean flag_ = false;//检测是否需要盾上有指定附魔
+                if(Sekiro.enchantment.equals("")){flag_=true;}
+                else {
+                    Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(Sekiro.enchantment));
+                    if(Sekiro.enchantedlvl >= 0) {
+                        if ((shield_1.getEnchantmentLevel(ench) == Sekiro.enchantedlvl) || shield_2.getEnchantmentLevel(ench) == Sekiro.enchantedlvl) {
+                            flag_ = true;
+                        }
+                    }else {
+                        if ((shield_1.getEnchantmentLevel(ench) >= 1) || (shield_2.getEnchantmentLevel(ench) >= 1)) {
+                            flag_ = true;
+                        }
+                    }
+                }
+                if(flag_){
                     double dmg = (e.getDamage());
                     dmg = dmg<0?dmg*(-1):dmg;
                     //flag负责限定弹反范围
