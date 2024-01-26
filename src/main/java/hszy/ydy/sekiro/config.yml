@@ -1,12 +1,12 @@
 #弹反伤害倍率(以对方伤害为基础)
-magnification: 2
+magnification: 1.2
 #弹反范围(mc默认面前180°,我默认面前60°,范围内可触发弹反和punishment1)
 angle: 60
 
 #弹反范围之内惩罚伤害倍率(或者叫破盾?)
-punishment1: 0.1
+punishment1: 0
 #弹反范围外到系统格挡范围内惩罚伤害倍率
-punishment2: 0.5
+punishment2: 0.3
 #背后惩罚伤害倍率
 punishment3: 1.2
 
